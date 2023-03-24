@@ -4,8 +4,12 @@ using UnityEngine;
 
 public struct Cell
 {
-    public enum Type {
-        Invalid, Initial, Empty, Mine, Number
+    public enum Type { // Type of cell
+        Invalid, // Out of bounds squares
+        Initial, // First clicked square and those adjacent to it
+        Empty, // Not numbered squares
+        Mine, // Mine
+        Number // Numbered squares
     }
     
     public Type type;

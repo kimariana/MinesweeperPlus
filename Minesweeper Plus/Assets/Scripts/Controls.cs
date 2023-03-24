@@ -12,6 +12,6 @@ public class Controls : MonoBehaviour
     void Start()
     {
         uiText = GetComponent<TextMeshProUGUI>();
-        uiText.enabled = false;
+        uiText.enabled = false; // Hides controls text at the start
     }
 }

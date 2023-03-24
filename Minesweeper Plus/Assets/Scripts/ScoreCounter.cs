@@ -19,7 +19,7 @@ public class ScoreCounter : MonoBehaviour
     void Update()
     {
         if(!Minesweeper.gameover) {
-            uiText.text = "Score: " + score.ToString("#,0");
+            uiText.text = "Score: " + score.ToString("#,0"); // Displays score
         }
     }
 }

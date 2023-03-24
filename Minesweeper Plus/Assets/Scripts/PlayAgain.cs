@@ -17,6 +17,6 @@ public class PlayAgain : MonoBehaviour
 
     void OnClick()
     {
-        SceneManager.LoadScene("Start");
+        SceneManager.LoadScene("Start"); // Loads start screen to play game again
     }
 }

@@ -27,12 +27,12 @@ public class Board : MonoBehaviour
         tilemap = GetComponent<Tilemap>();
     }
 
-    public void Draw(Cell[,] state)
+    public void Draw(Cell[,] state) // Redraws the board
     {
         int width = state.GetLength(0);
         int height = state.GetLength(1);
 
-        for(int x = 0; x < width; x++) {
+        for(int x = 0; x < width; x++) { // Sets related tiles for each cell
             for(int y = 0; y < height; y++) {
                 Cell cell = state[x,y];
                 tilemap.SetTile(cell.position, GetTile(cell));
@@ -40,36 +40,36 @@ public class Board : MonoBehaviour
         }
     }
 
-    Tile GetTile(Cell cell)
+    Tile GetTile(Cell cell) // Retrieves tile
     {
         if(cell.revealed) {
-            return GetRevealedTile(cell);
+            return GetRevealedTile(cell); // Empty, Exploded, Mine, Number
         } else if(cell.flagged) {
-            return tileFlag;
+            return tileFlag; // Flag
         } else {
-            return tileUnknown;
+            return tileUnknown; // Unknown
         }
     }
 
-    Tile GetRevealedTile(Cell cell)
+    Tile GetRevealedTile(Cell cell) // Retrieves revealed tile
     {
         switch(cell.type) {
             case Cell.Type.Empty:
-                return tileEmpty;
+                return tileEmpty; // Empty
             case Cell.Type.Mine:
                 if(cell.exploded) {
-                    return tileExploded;
+                    return tileExploded; // Exploded
                 } else {
-                    return tileMine;
+                    return tileMine; // Mine
                 }
             case Cell.Type.Number:
-                return GetNumberTile(cell);
+                return GetNumberTile(cell); // Number
             default:
                 return null;
         }
     }
 
-    Tile GetNumberTile(Cell cell)
+    Tile GetNumberTile(Cell cell) // Retrieves numbered tile
     {
         switch(cell.number) {
             case 1:

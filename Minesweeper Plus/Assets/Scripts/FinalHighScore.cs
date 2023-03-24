@@ -13,9 +13,9 @@ public class FinalHighScore : MonoBehaviour
     void Start()
     {
         uiText = GetComponent<TextMeshProUGUI>();
-        if(PlayerPrefs.HasKey("HighScore")) {
+        if(PlayerPrefs.HasKey("HighScore")) { // If the PlayerPrefs HighScore already exists, read it
             highScore = PlayerPrefs.GetInt("HighScore");
         }
-        uiText.text = "High Score: " + highScore.ToString("#,0");
+        uiText.text = "High Score: " + highScore.ToString("#,0"); // Displays high score on gameover screen
     }
 }

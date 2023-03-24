@@ -18,10 +18,10 @@ public class Timer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Minesweeper.start && !Minesweeper.gameover) {
+        if(Minesweeper.start && !Minesweeper.gameover) { // Updates time DURING the level
             timeCountdown -= Time.deltaTime;
 
-            uiText.text = GetTime();
+            uiText.text = GetTime(); // Displays time
         }
     }
 
@@ -29,14 +29,14 @@ public class Timer : MonoBehaviour
     {
         float minutes = Mathf.Floor(timeCountdown / 60);
         float seconds = timeCountdown % 60;
-        if(minutes <= 0 && seconds <= 0) {
+        if(minutes <= 0 && seconds <= 0) { // Checks for end of game
             minutes = 0;
             seconds = 0;
             Minesweeper.gameover = true;
-            ScoreCounter.uiText.text = "Score: " + ScoreCounter.score.ToString("#,0");
+            ScoreCounter.uiText.text = "Score: " + ScoreCounter.score.ToString("#,0"); // Displays final score
             Minesweeper.end = true;
         }
 
-        return minutes.ToString("00") + ":" + seconds.ToString("00");
+        return minutes.ToString("00") + ":" + seconds.ToString("00"); // Displays time
     }
 }

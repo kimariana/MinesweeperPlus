@@ -12,6 +12,6 @@ public class HowToPlay : MonoBehaviour
     void Start()
     {
         uiText = GetComponent<TextMeshProUGUI>();
-        uiText.enabled = false;
+        uiText.enabled = false; // Hides how to play text at the start
     }
 }

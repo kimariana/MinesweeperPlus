@@ -17,6 +17,6 @@ public class Level : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        uiText.text = "Level: " + level.ToString("#,0");
+        uiText.text = "Level: " + level.ToString("#,0"); // Displays level
     }
 }

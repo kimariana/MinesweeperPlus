@@ -19,16 +19,18 @@ public class Menu : MonoBehaviour
 
     void OnButtonClick()
     {
-        if(action == "Restart") {
+        if(action == "Restart") { // Restart button is pressed
+            // Resets variables
             ScoreCounter.score = 0;
             Timer.timeCountdown = 59;
             Level.level = 0;
-            SceneManager.LoadScene("Minesweeper");
-        } else if(action == "Exit") {
+            SceneManager.LoadScene("Minesweeper"); // Start game again
+        } else if(action == "Exit") { // Exit button is pressed
+            // Resets variables
             ScoreCounter.score = 0;
             Timer.timeCountdown = 59;
             Level.level = 0;
-            SceneManager.LoadScene("Start");
+            SceneManager.LoadScene("Start"); // Load start screen
         }
     }
 }

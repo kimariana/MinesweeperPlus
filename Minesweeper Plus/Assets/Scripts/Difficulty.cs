@@ -7,12 +7,12 @@ using TMPro;
 public class Difficulty : MonoBehaviour
 {
     private TextMeshProUGUI uiText;
-    static public string difficulty = "Normal";
+    static public string difficulty = "Normal"; // Temporary
 
     // Start is called before the first frame update
     void Start()
     {
         uiText = GetComponent<TextMeshProUGUI>();
-        uiText.text = difficulty;
+        uiText.text = difficulty; // Difficulty value is updated through buttons
     }
 }

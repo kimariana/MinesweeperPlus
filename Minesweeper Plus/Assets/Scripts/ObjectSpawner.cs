@@ -29,7 +29,7 @@ public class ObjectSpawner : MonoBehaviour
         MaintainPop();
     }
 
-    void InitialPop()
+    void InitialPop() // Spawns objects at the start
     {
         for(int i = 0; i < objLimit; i++) {
             Vector3 position = GetRandPos(true);
@@ -38,7 +38,7 @@ public class ObjectSpawner : MonoBehaviour
         }
     }
 
-    void MaintainPop()
+    void MaintainPop() // Spawns more objects as others are destroyed
     {
         if(objCount < objLimit) {
             for(int i = 0; i < objPerFrame; i++) {
@@ -48,12 +48,12 @@ public class ObjectSpawner : MonoBehaviour
             }
         }
     }
-    Vector3 GetRandPos(bool withinCam)
+    Vector3 GetRandPos(bool withinCam) // Get random position for the object
     {
         Vector3 position = Random.insideUnitCircle;
 
         if(!withinCam) {
-            position = position.normalized;
+            position = position.normalized; // Position set outside of area
         }
 
         position *= spawnCircleRadius;
@@ -62,7 +62,7 @@ public class ObjectSpawner : MonoBehaviour
         return position;
     }
 
-    ObjectScript AddObj(Vector3 position)
+    ObjectScript AddObj(Vector3 position) // Adds a new object to the game
     {
         objCount += 1;
         GameObject newObj = Instantiate(
@@ -70,10 +70,10 @@ public class ObjectSpawner : MonoBehaviour
             Quaternion.FromToRotation(Vector3.up, (gameArea.transform.position-position)),
             gameObject.transform);
 
-        ObjectScript objScript = newObj.GetComponent<ObjectScript>();
+        ObjectScript objScript = newObj.GetComponent<ObjectScript>(); // Access another script
         objScript.objSpawner = this;
         objScript.gameArea = gameArea;
-        objScript.speed = Random.Range(slowestSpeed, fastestSpeed);
+        objScript.speed = Random.Range(slowestSpeed, fastestSpeed); // Sets random speed
 
         return objScript;
     }

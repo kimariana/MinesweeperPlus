@@ -14,10 +14,10 @@ public class Minesweeper : MonoBehaviour
 
     private Board board;
     private Cell[,] state;
-    static public bool gameover;
-    static public bool start;
-    static public bool end;
-    static public int counter;
+    static public bool gameover; // For end of each level
+    static public bool start; // For first click square
+    static public bool end; // For end of game
+    static public int counter; // Number of safe squares clicked by user
     static public int finalScore;
     
     void Awake()
@@ -30,16 +30,16 @@ public class Minesweeper : MonoBehaviour
         NewLevel();
     }
 
-    public void NewLevel()
+    public void NewLevel() // Starts a new level, resetting all the variables
     {
         state = new Cell[width, height];
         Level.level += 1;
         mineCount += 3;
-        mineCount = Mathf.Clamp(mineCount, 0, (int) ((width * height) * .19));
+        mineCount = Mathf.Clamp(mineCount, 0, (int) ((width * height) * .19)); // Limits the number of mines
         if(Difficulty.difficulty == "Easy") {
-            objective = Random.Range((int) ((width * height) * 0.1), (int) ((width * height) * 0.15));
+            objective = Random.Range((int) ((width * height) * 0.1), (int) ((width * height) * 0.15)); // Sets a random objective count
         } else{
-            objective = Random.Range((int) ((width * height) * 0.07), (int) ((width * height) * 0.1));
+            objective = Random.Range((int) ((width * height) * 0.07), (int) ((width * height) * 0.1)); // Sets a random objective count
         }
         counter = 0;
         gameover = false;
@@ -48,24 +48,25 @@ public class Minesweeper : MonoBehaviour
 
         GenerateCells();
 
-        Camera.main.transform.position = new Vector3(width / 2f, height / 2f, -10f); // center camera
+        Camera.main.transform.position = new Vector3(width / 2f, height / 2f, -10f); // Center camera
         board.Draw(state);
     }
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Escape)) {
+        if(Input.GetKeyDown(KeyCode.Escape)) { // Pressing ESC shows a Menu with the option to Restart or Exit
             gameover = true;
             SceneManager.LoadScene("Menu");
         }
         if(!start) {
-            if(Input.GetMouseButtonDown(0)) {
+            if(Input.GetMouseButtonDown(0)) { // First left-click ensures no mine is clicked
                 Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 Vector3Int cellPos = board.tilemap.WorldToCell(worldPos);
                 Cell firstCell = GetCell(cellPos.x, cellPos.y);
                 if(firstCell.type != Cell.Type.Invalid) {
                     firstCell.type = Cell.Type.Initial;
                     state[cellPos.x, cellPos.y] = firstCell;
+                    // Sets adjacent squares of the first clicked square as Initial type to avoid being a mine
                     for(int adjX = -1; adjX <= 1; adjX++) {
                         for(int adjY = -1; adjY <= 1; adjY++) {
                             if(adjX == 0 && adjY == 0) {
@@ -76,41 +77,42 @@ public class Minesweeper : MonoBehaviour
                             int y = cellPos.y + adjY;
 
                             Cell cell = GetCell(x,y);
-                            if(cell.type != Cell.Type.Invalid) {
+                            if(cell.type != Cell.Type.Invalid) { // Ensures cell is within bounds
                                 state[x,y].type = Cell.Type.Initial;
                             }
                         }
                     }
                     GenerateMines();
+                    // Sets adjacent squares of the first clicked square back to Empty type
                     for(int adjX = -1; adjX <= 1; adjX++) {
                         for(int adjY = -1; adjY <= 1; adjY++) {
                             int x = cellPos.x + adjX;
                             int y = cellPos.y + adjY;
 
                             Cell cell = GetCell(x,y);
-                            if(cell.type != Cell.Type.Invalid) {
+                            if(cell.type != Cell.Type.Invalid) { // Ensures cell is within bounds
                                 state[x,y].type = Cell.Type.Empty;
                             }
                         }
                     }
                     GenerateNumbers();
                     board.Draw(state);
-                    Reveal();
+                    Reveal(); // Reveal the first clicked square
                     start = true;
                 }
             }
         } else if(!gameover) {
-            if(Input.GetMouseButtonDown(1)) {
+            if(Input.GetMouseButtonDown(1)) { // Flags square when right click
                 Flag();
-            } else if(Input.GetMouseButtonDown(0)) {
+            } else if(Input.GetMouseButtonDown(0)) { // Reveals square when left click
                 Reveal();
             }
-        } else if(end) {
+        } else if(end) { // End of game
             GameOver();
         }
     }
 
-    void GenerateCells()
+    void GenerateCells() // Creates cells for the size of the board
     {
         for(int x = 0; x < width; x++) {
             for(int y = 0; y < height; y++) {
@@ -122,7 +124,7 @@ public class Minesweeper : MonoBehaviour
         }
     }
 
-    void GenerateMines()
+    void GenerateMines() // Creates random mines across the board
     {
         for(int i = 0; i < mineCount; i++) {
             int x = Random.Range(0, width);
@@ -131,11 +133,11 @@ public class Minesweeper : MonoBehaviour
             while(state[x,y].type == Cell.Type.Mine || state[x,y].type == Cell.Type.Initial) {
                 x++;
                 
-                if(x >= width) {
+                if(x >= width) { // Ensures within bounds
                     x = 0;
-                    y++; // increment row
+                    y++; // Increment row
 
-                    if(y >= height) {
+                    if(y >= height) { // Ensures within bounds
                         y = 0;
                     }
                 }
@@ -145,17 +147,17 @@ public class Minesweeper : MonoBehaviour
         }
     }
 
-    void GenerateNumbers()
+    void GenerateNumbers() // Sets numbered squares indicating number of mines
     {
         for(int x = 0; x < width; x++) {
             for(int y = 0; y < height; y++) {
                 Cell cell = state[x,y];
 
-                if(cell.type == Cell.Type.Mine) {
+                if(cell.type == Cell.Type.Mine) { // Skips mines
                     continue;
                 }
 
-                cell.number = CountMines(x,y);
+                cell.number = CountMines(x,y); // Counts number of mines
                 
                 if(cell.number > 0) {
                     cell.type = Cell.Type.Number;
@@ -166,13 +168,13 @@ public class Minesweeper : MonoBehaviour
         }
     }
 
-    int CountMines(int cellX, int cellY) {
+    int CountMines(int cellX, int cellY) { // Counts the number of mines adjacent to a square
         int count = 0;
 
         for(int adjX = -1; adjX <= 1; adjX++) {
             for(int adjY = -1; adjY <= 1; adjY++) {
                 if(adjX == 0 && adjY == 0) {
-                    continue;
+                    continue; // Skips initial square
                 }
 
                 int x = cellX + adjX;
@@ -187,13 +189,13 @@ public class Minesweeper : MonoBehaviour
         return count;
     }
 
-    void Flag()
+    void Flag() // A flag to mark square as a mine
     {
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3Int cellPos = board.tilemap.WorldToCell(worldPos);
         Cell cell = GetCell(cellPos.x, cellPos.y);
 
-        if(cell.type == Cell.Type.Invalid || cell.revealed) {
+        if(cell.type == Cell.Type.Invalid || cell.revealed) { // Avoids revealed cells and out of bounds
             return;
         }
 
@@ -202,7 +204,7 @@ public class Minesweeper : MonoBehaviour
         board.Draw(state);
     }
 
-    void Reveal()
+    void Reveal() // Reveals the square user clicked
     {
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3Int cellPos = board.tilemap.WorldToCell(worldPos);
@@ -214,29 +216,29 @@ public class Minesweeper : MonoBehaviour
 
         switch(cell.type) {
             case Cell.Type.Mine:
-                Explode(cell);
+                Explode(cell); // If square clicked is a mine, explode (decrement score and time)
                 break;
-            case Cell.Type.Empty:
-                Timer.timeCountdown += 0.25f;
-                ScoreCounter.score += 10;
-                counter += 1;
+            case Cell.Type.Empty: // Safe square
+                Timer.timeCountdown += 0.25f; // Adds 0.25 seconds to time
+                ScoreCounter.score += 10; // Adds 10 points to score
+                counter += 1; // Adds 1 to counter
                 RevealEmpty(cell);
-                CheckWin();
+                CheckWin(); // Check if need to go to next level
                 break;
-            default:
-                Timer.timeCountdown += 0.25f;
-                ScoreCounter.score += 10;
-                counter += 1;
+            default: // Safe square (numbered)
+                Timer.timeCountdown += 0.25f; // Adds 0.25 seconds to time
+                ScoreCounter.score += 10; // Adds 10 points to score
+                counter += 1; // Adds 1 to counter
                 cell.revealed = true;
                 state[cellPos.x, cellPos.y] = cell;
-                CheckWin();
+                CheckWin(); // Check if need to go to next level
                 break;
         }
 
         board.Draw(state);
     }
 
-    void RevealEmpty(Cell cell)
+    void RevealEmpty(Cell cell) // Reveals adjacent empty cells
     {
         if(cell.revealed) {
             return;
@@ -248,11 +250,11 @@ public class Minesweeper : MonoBehaviour
         cell.revealed = true;
         state[cell.position.x, cell.position.y] = cell;
 
-        if(cell.type == Cell.Type.Empty) {
+        if(cell.type == Cell.Type.Empty) { // Recursion to reveal all adjacent empty cells
             for(int adjX = -1; adjX <= 1; adjX++) {
                 for(int adjY = -1; adjY <= 1; adjY++) {
                     if(adjX == 0 && adjY == 0) {
-                        continue;
+                        continue; // Skips initial cell
                     }
 
                     int x = cell.position.x + adjX;
@@ -264,25 +266,26 @@ public class Minesweeper : MonoBehaviour
         }
     }
 
-    void Explode(Cell cell)
+    void Explode(Cell cell) // Mine was revealed
     {
         cell.revealed = true;
         cell.exploded = true;
         state[cell.position.x, cell.position.y] = cell;
 
-        Timer.timeCountdown -= 20;
-        ScoreCounter.score -= 10;
+        Timer.timeCountdown -= 20; // Decrements 20 seconds
+        ScoreCounter.score -= 10; // Decrements 10 points
     }
 
-    void CheckWin()
+    void CheckWin() // Check if need to go to next level
     {
-        if(counter != objective) {
+        if(counter != objective) { // Checks if number of safe squares clicked doesn't meet objective number
             return;
         }
 
-        gameover = true;
+        // Objective has been met
+        gameover = true; // Pauses timer and stops mouse input
 
-        for(int x = 0; x < width; x++) { // flag remaining mines
+        for(int x = 0; x < width; x++) { // Flag remaining mines
             for(int y = 0; y < height; y++) {
                 Cell cell = state[x,y];
 
@@ -293,16 +296,16 @@ public class Minesweeper : MonoBehaviour
             }
         }
         
-        Timer.timeCountdown += 5;
+        Timer.timeCountdown += 5; // Adds 5 seconds to time
         Timer.uiText.text = Timer.GetTime();
-        ScoreCounter.uiText.text = "Score: " + ScoreCounter.score.ToString("#,0");
-        Invoke("NewLevel", 1f);
+        ScoreCounter.uiText.text = "Score: " + ScoreCounter.score.ToString("#,0"); // Updates time text
+        Invoke("NewLevel", 1f); // Start next level
     }
 
-    void GameOver()
+    void GameOver() // Game has ended, time ran out
     {
-        end = false;
-        for(int x = 0; x < width; x++) { // reveal remaining mines
+        end = false; // Revert end back to false
+        for(int x = 0; x < width; x++) { // Reveal remaining mines
             for(int y = 0; y < height; y++) {
                 Cell cell = state[x,y];
 
@@ -314,17 +317,18 @@ public class Minesweeper : MonoBehaviour
         }
         board.Draw(state);
 
-        finalScore = ScoreCounter.score;
-        HighScore.TRY_SET_HIGH_SCORE(ScoreCounter.score);
+        finalScore = ScoreCounter.score; // To display final score at gameover scene
+        HighScore.TRY_SET_HIGH_SCORE(ScoreCounter.score); // Checks if new high score
+        // Resets variables
         ScoreCounter.score = 0;
         Timer.timeCountdown = 59;
         Level.level = 0;
         mineCount = sMineCount;
 
-        Invoke("SceneChange", 1f);
+        Invoke("SceneChange", 1f); // Goes to gameover scene
     }
 
-    void SceneChange()
+    void SceneChange() // Changes scene to gameover
     {
         SceneManager.LoadScene("Gameover");
     }
@@ -332,14 +336,14 @@ public class Minesweeper : MonoBehaviour
     Cell GetCell(int x, int y)
     {
         if(isValid(x,y)) {
-            return state[x,y];
+            return state[x,y]; // Returns cell in board
         } else {
-            return new Cell(); // returns invalid cell
+            return new Cell(); // Returns invalid cell
         }
     }
 
-    bool isValid(int x, int y)
+    bool isValid(int x, int y) // Checks if cell is within bounds
     {
-        return x >= 0 && x < width && y >= 0 && y < height; // checks if cell is within bounds
+        return x >= 0 && x < width && y >= 0 && y < height;
     }
 }

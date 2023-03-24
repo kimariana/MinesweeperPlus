@@ -33,7 +33,7 @@ public class HighScore : MonoBehaviour
 
     static public void TRY_SET_HIGH_SCORE(int scoreToTry) {
         if(scoreToTry <= SCORE) return;
-        SCORE = scoreToTry;
+        SCORE = scoreToTry; // Updates high score
     }
 
     // Allows to easily reset the PlayerPrefs HighScore

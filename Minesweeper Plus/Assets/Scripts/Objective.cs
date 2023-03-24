@@ -17,6 +17,7 @@ public class Objective : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Displays number of safe squares clicked and objective number
         uiText.text = Minesweeper.counter.ToString("#,0") + "/" + Minesweeper.objective.ToString("#,0");
     }
 }

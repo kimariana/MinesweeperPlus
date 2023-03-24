@@ -12,6 +12,6 @@ public class FinalScore : MonoBehaviour
     void Start()
     {
         uiText = GetComponent<TextMeshProUGUI>();
-        uiText.text = "Score: " + Minesweeper.finalScore.ToString("#,0");
+        uiText.text = "Score: " + Minesweeper.finalScore.ToString("#,0"); // Displays score on gameover screen
     }
 }

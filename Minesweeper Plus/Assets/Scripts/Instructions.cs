@@ -18,12 +18,12 @@ public class Instructions : MonoBehaviour
 
     void OnButtonClick()
     {
-        if(instructions == "HowToPlay") {
-            HowToPlay.uiText.enabled = !HowToPlay.uiText.enabled;
-            Controls.uiText.enabled = false;
-        } else if(instructions == "Controls") {
-            Controls.uiText.enabled = !Controls.uiText.enabled;
-            HowToPlay.uiText.enabled = false;
+        if(instructions == "HowToPlay") { // HowToPlay button is pressed
+            HowToPlay.uiText.enabled = !HowToPlay.uiText.enabled; // If displayed, hide text; if hidden, show text
+            Controls.uiText.enabled = false; // Hides controls text
+        } else if(instructions == "Controls") { // Controls button is pressed
+            Controls.uiText.enabled = !Controls.uiText.enabled; // If displayed, hide text; if hidden, show text
+            HowToPlay.uiText.enabled = false; // Hides how to play text
         }
     }
 }
